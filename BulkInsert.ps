@@ -1,0 +1,28 @@
+# Variables for your database connection
+$server = "DESKTOP-Q3F87JF\SQLEXPRESS"
+$database = "RazeDb"
+$table = "Test"
+$username = "desktop-q3f87jf\dell"  # If your database requires a username
+# No password for databases without authentication
+
+# Path to your CSV file
+$csvPath = "C:\Users\dell\Videos\TEST.csv"
+# Import the SqlServer module
+Import-Module SqlServer
+# Connection string
+$connectionString = "Server=$server;Database=$database;Integrated Security=True;"
+
+# SQL query to bulk insert from CSV
+$sqlQuery = @"
+BULK INSERT $table
+FROM '$csvPath'
+WITH (
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR = '\n',
+    FIRSTROW = 2, -- If your CSV has a header row
+    TABLOCK
+)
+"@
+
+# Execute the query
+Invoke-Sqlcmd -ServerInstance $server -Database $database -Query $sqlQuery -TrustServerCertificate
